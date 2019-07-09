@@ -88,7 +88,7 @@ balloonSize=0.08
 balloonMsgHeight=0.01
 balloonBody = visual.ImageStim(
     win=win, name='balloonBody',units='height', 
-    image='redBalloon.png', mask=None,
+    image='blueBalloon.png', mask=None,
     ori=-90, pos=[0,0], size=1.0,
     color=[1,1,1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
@@ -120,7 +120,8 @@ bankedMsg = visual.TextStim(win=win, name='bankedMsg',
 feedbackClock = core.Clock()
 from psychopy import sound
 feedbackText=""
-#bang = sound.Sound("bang.wav")
+bang = sound.Sound("bang.wav")
+cash = sound.Sound("cash.wav")
 
 feedbackMsg = visual.TextStim(win=win, name='feedbackMsg',
     text='default text',
@@ -248,9 +249,9 @@ for thisTrial in trials:
     continueRoutine = True
     # update component parameters for each repeat
     
-    balloonSize=0.08
-    popped=False
-    nPumps=0
+    balloonSize = 0.08
+    popped = False
+    nPumps = 0
     
     bankButton = event.BuilderKeyResponse()
     # keep track of which components have finished
@@ -270,8 +271,8 @@ for thisTrial in trials:
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
         thisBalloonEarnings=nPumps*0.05
-        balloonEarnings = u"This balloon value:\n£%.2f" % thisBalloonEarnings
-        bankedText = u"You have banked:\n£%.2f" % bankedEarnings
+        balloonEarnings = u"This balloon value:\n$%.2f" % thisBalloonEarnings
+        bankedText = u"You have banked:\n$%.2f" % bankedEarnings
         balloonSize=0.1+nPumps*0.015
         
         # *balloonBody* updates
@@ -314,12 +315,12 @@ for thisTrial in trials:
             bankedMsg.setText(bankedText, log=False)
         if event.getKeys(['space']):
           nPumps=nPumps+1
-          if nPumps>maxPumps:
-            popped=True
+          if nPumps > maxPumps:
+            popped = True
             continueRoutine=False
         if event.getKeys(['return']):
-            popped=False
-            continueRoutine=False
+            popped = False
+            continueRoutine = False
         
         # *bankButton* updates
         if t >= 0.0 and bankButton.status == NOT_STARTED:
@@ -363,9 +364,10 @@ for thisTrial in trials:
             thisComponent.setAutoDraw(False)
     #calculate cash 'earned'
     if popped:
-      thisBalloonEarnings=0.0
-      lastBalloonEarnings=0.0
-    else:   lastBalloonEarnings=thisBalloonEarnings
+      thisBalloonEarnings = 0.0
+      lastBalloonEarnings = 0.0
+    else:
+        lastBalloonEarnings = thisBalloonEarnings
     bankedEarnings = bankedEarnings+lastBalloonEarnings
     #save data
     trials.addData('nPumps', nPumps)
@@ -395,9 +397,10 @@ for thisTrial in trials:
     # update component parameters for each repeat
     if popped==True:
       feedbackText="Oops! Lost that one!"
-      #bang.play()
+      bang.play()
     else:
-      feedbackText=u"You banked £%.2f" %lastBalloonEarnings
+      feedbackText=u"You banked $%.2f" %lastBalloonEarnings
+      cash.play()
     
     feedbackMsg.setText(feedbackText)
     # keep track of which components have finished
@@ -477,7 +480,7 @@ finalScoreClock.reset()  # clock
 frameN = -1
 continueRoutine = True
 # update component parameters for each repeat
-scoreText=u"Well done! You banked a total of\n£%2.f" % bankedEarnings
+scoreText=u"Well done! You banked a total of\n$%2.f" % bankedEarnings
 finalScore_2.setText(scoreText)
 doneKey = event.BuilderKeyResponse()
 # keep track of which components have finished
