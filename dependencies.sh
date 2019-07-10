@@ -15,7 +15,7 @@ sudo pip install psychopy
 if [[ "$OSTYPE" == "darwin"* ]]; then
     sudo brew install python2-pyo
 elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-    sudo apt-get install python2-pyo
+    sudo apt-get install python-pyo
 else
     echo "[Error] OS not detected. Exiting"
     echo

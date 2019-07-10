@@ -21,7 +21,6 @@ from numpy.random import random, randint, normal, shuffle
 import os  # handy system and path functions
 import sys  # to get file system encoding
 
-
 # Ensure that relative paths start from the same directory as this script
 _thisDir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(_thisDir)
@@ -42,12 +41,12 @@ filename = _thisDir + os.sep + 'data' + os.sep + '%s_%s' % (expInfo['participant
 
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
-    extraInfo=expInfo, runtimeInfo=None,
-    originPath=_thisDir,
-    savePickle=True, saveWideText=True,
-    dataFileName=filename)
+                                 extraInfo=expInfo, runtimeInfo=None,
+                                 originPath=_thisDir,
+                                 savePickle=True, saveWideText=True,
+                                 dataFileName=filename)
 # save a log file for detail verbose info
-logFile = logging.LogFile(filename+'.log', level=logging.WARNING)
+logFile = logging.LogFile(filename + '.log', level=logging.WARNING)
 logging.console.setLevel(logging.WARNING)  # this outputs to the screen, not a file
 
 endExpNow = False  # flag for 'escape' or other condition => quit the exp
@@ -58,7 +57,7 @@ endExpNow = False  # flag for 'escape' or other condition => quit the exp
 win = visual.Window(
     size=[1920, 1080], fullscr=True, screen=0,
     allowGUI=False, allowStencil=False,
-    monitor='testMonitor', color=[0,0,0], colorSpace='rgb',
+    monitor='testMonitor', color=[0, 0, 0], colorSpace='rgb',
     blendMode='avg', useFBO=True)
 # store frame rate of monitor if we can measure it
 expInfo['frameRate'] = win.getActualFrameRate()
@@ -70,17 +69,17 @@ else:
 # Initialize components for Routine "instructions"
 instructionsClock = core.Clock()
 instrMessage = visual.TextStim(win=win, name='instrMessage',
-    text="This is a game where you have to optimise your earnings in a balloon pumping competition.\n\
+                               text="This is a game where you have to optimise your earnings in a balloon pumping competition.\n\
     \nYou get prize money for each balloon you pump up, according to its size. But if you pump it too "
-         "far it will pop and you'll get nothing for that balloon.\n\nBalloons differ in their "
-         "maximum size - they can occasionally reach to almost the size of the screen but most will"
-         " pop well before that.\n\nPress\n    SPACE to pump the balloon\n    RETURN to bank the cash"
-         " for this balloon and move onto the next\n",
-    font='Arial',
-    units='height', pos=[0, 0], height=0.025, wrapWidth=None, ori=0, 
-    color='white', colorSpace='rgb', opacity=1, 
-    languageStyle='LTR',
-    depth=0.0)
+                                    "far it will pop and you'll get nothing for that balloon.\n\nBalloons differ in their "
+                                    "maximum size - they can occasionally reach to almost the size of the screen but most will"
+                                    " pop well before that.\n\nPress\n    SPACE to pump the balloon\n    RETURN to bank the cash"
+                                    " for this balloon and move onto the next\n",
+                               font='Arial',
+                               units='height', pos=[0, 0], height=0.025, wrapWidth=None, ori=0,
+                               color='white', colorSpace='rgb', opacity=1,
+                               languageStyle='LTR',
+                               depth=0.0)
 
 # Initialize components for Routine "trial"
 trialClock = core.Clock()
@@ -89,80 +88,106 @@ balloonEarnings = ''
 bankedText = ''
 lastBalloonEarnings = 0.0
 thisBalloonEarnings = 0.0
-balloonSize=0.08
+balloonSize = 0.08
 balloonMsgHeight = 0.01
 
 redBalloonBody = visual.ImageStim(
     win=win, name='balloonBody', units='height',
     image='redBalloon.png', mask=None,
-    ori=-90, pos=[0,0], size=1.0,
-    color=[1,1,1], colorSpace='rgb', opacity=1,
+    ori=-90, pos=[0, 0], size=1.0,
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-2.0)
 greenBalloonBody = visual.ImageStim(
     win=win, name='balloonBody', units='height',
     image='greenBalloon.png', mask=None,
-    ori=-90, pos=[0,0], size=1.0,
-    color=[1,1,1], colorSpace='rgb', opacity=1,
+    ori=-90, pos=[0, 0], size=1.0,
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-2.0)
 blueBalloonBody = visual.ImageStim(
     win=win, name='balloonBody', units='height',
     image='blueBalloon.png', mask=None,
-    ori=-90, pos=[0,0], size=1.0,
-    color=[1,1,1], colorSpace='rgb', opacity=1,
+    ori=-90, pos=[0, 0], size=1.0,
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-2.0)
 balloons = [redBalloonBody, greenBalloonBody, blueBalloonBody]
+balloonsCount = [30, 30, 30]
+RED_BALLOON = 0
+GREEN_BALLOON = 1
+BLUE_BALLOON = 2
+
+
+def get_random_balloon():
+    while True:
+        randomize = randint(0, 3)
+        if balloonsCount[randomize] > 0:
+            break
+    balloonsCount[randomize] -= 1
+    return balloons[randomize], get_random_pumps(randomize)
+
+
+def get_random_pumps(ballooncolor=RED_BALLOON):
+    if ballooncolor == RED_BALLOON:
+        return randint(1, 9)
+    elif ballooncolor == GREEN_BALLOON:
+        return randint(1, 33)
+    elif ballooncolor == BLUE_BALLOON:
+        return randint(1, 65)
+    else:
+        raise Exception("[Error] Balloon not identified")
+        return
+
 
 reminderMsg = visual.TextStim(win=win, name='reminderMsg',
-    text='Press SPACE to pump the balloon\nPress RETURN to bank this sum',
-    font='Arial',
-    units='height', pos=[0, -0.8], height=0.025, wrapWidth=None, ori=0, 
-    color='white', colorSpace='rgb', opacity=1, 
-    languageStyle='LTR',
-    depth=-3.0)
+                              text='Press SPACE to pump the balloon\nPress RETURN to bank this sum',
+                              font='Arial',
+                              units='height', pos=[0, -0.8], height=0.025, wrapWidth=None, ori=0,
+                              color='white', colorSpace='rgb', opacity=1,
+                              languageStyle='LTR',
+                              depth=-3.0)
 balloonValMsg = visual.TextStim(win=win, name='balloonValMsg',
-    text='default text',
-    font='Arial',
-    units='height', pos=[0,0.05], height=0.025, wrapWidth=None, ori=0, 
-    color='white', colorSpace='rgb', opacity=1, 
-    languageStyle='LTR',
-    depth=-4.0)
+                                text='default text',
+                                font='Arial',
+                                units='height', pos=[0, 0.05], height=0.025, wrapWidth=None, ori=0,
+                                color='white', colorSpace='rgb', opacity=1,
+                                languageStyle='LTR',
+                                depth=-4.0)
 bankedMsg = visual.TextStim(win=win, name='bankedMsg',
-    text='default text',
-    font='Arial',
-    units='height', pos=[0, 0.8], height=0.025, wrapWidth=None, ori=0, 
-    color='white', colorSpace='rgb', opacity=1, 
-    languageStyle='LTR',
-    depth=-5.0)
-
+                            text='default text',
+                            font='Arial',
+                            units='height', pos=[0, 0.8], height=0.025, wrapWidth=None, ori=0,
+                            color='white', colorSpace='rgb', opacity=1,
+                            languageStyle='LTR',
+                            depth=-5.0)
 
 # Initialize components for Routine "feedback"
 feedbackClock = core.Clock()
 from psychopy import sound
+
 feedbackText = ""
 bang = sound.Sound("bang.wav")
 cash = sound.Sound("cash.wav")
 
 feedbackMsg = visual.TextStim(win=win, name='feedbackMsg',
-    text='default text',
-    font='Arial',
-    units='height', pos=[0, 0], height=0.025, wrapWidth=None, ori=0, 
-    color='white', colorSpace='rgb', opacity=1, 
-    languageStyle='LTR',
-    depth=-1.0)
+                              text='default text',
+                              font='Arial',
+                              units='height', pos=[0, 0], height=0.025, wrapWidth=None, ori=0,
+                              color='white', colorSpace='rgb', opacity=1,
+                              languageStyle='LTR',
+                              depth=-1.0)
 
 # Initialize components for Routine "finalScore"
 finalScoreClock = core.Clock()
 
 finalScore_2 = visual.TextStim(win=win, name='finalScore_2',
-    text='default text',
-    font='Arial',
-    units='height', pos=[0, 0], height=0.025, wrapWidth=None, ori=0, 
-    color='white', colorSpace='rgb', opacity=1, 
-    languageStyle='LTR',
-    depth=-1.0)
+                               text='default text',
+                               font='Arial',
+                               units='height', pos=[0, 0], height=0.025, wrapWidth=None, ori=0,
+                               color='white', colorSpace='rgb', opacity=1,
+                               languageStyle='LTR',
+                               depth=-1.0)
 
 # Create some handy timers
 globalClock = core.Clock()  # to track the time since experiment started
@@ -191,7 +216,7 @@ while continueRoutine:
     t = instructionsClock.getTime()
     frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
     # update/draw components on each frame
-    
+
     # *instrMessage* updates
     if t >= 0.0 and instrMessage.status == NOT_STARTED:
         # keep track of start time/frame for later
@@ -199,7 +224,7 @@ while continueRoutine:
         instrMessage.frameNStart = frameN  # exact frame index
         win.timeOnFlip(instrMessage, 'tStartRefresh')  # time at next scr refresh
         instrMessage.setAutoDraw(True)
-    
+
     # *resp* updates
     if t >= 0.0 and resp.status == NOT_STARTED:
         # keep track of start time/frame for later
@@ -211,18 +236,18 @@ while continueRoutine:
         event.clearEvents(eventType='keyboard')
     if resp.status == STARTED:
         theseKeys = event.getKeys(keyList=['space'])
-        
+
         # check for quit:
         if "escape" in theseKeys:
             endExpNow = True
         if len(theseKeys) > 0:  # at least one key was pressed
             # a response ends the routine
             continueRoutine = False
-    
+
     # check for quit (typically the Esc key)
     if endExpNow or event.getKeys(keyList=["escape"]):
         core.quit()
-    
+
     # check if all components have finished
     if not continueRoutine:  # a component has requested a forced-end of Routine
         break
@@ -231,7 +256,7 @@ while continueRoutine:
         if hasattr(thisComponent, "status") and thisComponent.status is not FINISHED:
             continueRoutine = True
             break  # at least one component has not yet finished
-    
+
     # refresh the screen
     if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
         win.flip()
@@ -246,10 +271,10 @@ thisExp.addData('instrMessage.stopped', instrMessage.tStopRefresh)
 routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
-trials = data.TrialHandler(nReps=1.0, method='random', 
-    extraInfo=expInfo, originPath=-1,
-    trialList=data.importConditions('trialTypes.xlsx'),
-    seed=1832, name='trials')
+trials = data.TrialHandler(nReps=1.0, method='random',
+                           extraInfo=expInfo, originPath=-1,
+                           trialList=data.importConditions('trialTypes.xlsx'),
+                           seed=1832, name='trials')
 thisExp.addLoop(trials)  # add the loop to the experiment
 thisTrial = trials.trialList[0]  # so we can initialise stimuli with some values
 
@@ -263,22 +288,24 @@ for thisTrial in trials:
     # abbreviate parameter names if possible (e.g. rgb = thisTrial.rgb)
     if thisTrial is not None:
         for paramName in thisTrial:
-            exec('{} = thisTrial[paramName]'.format(paramName))
-    
+            # get random balloon
+            randomBalloonBody, maxPumps = get_random_balloon()
+            # exec('{} = thisTrial[paramName]'.format(paramName))
+
     # ------Prepare to start Routine "trial"-------
     t = 0
     trialClock.reset()  # clock
     frameN = -1
     continueRoutine = True
     # update component parameters for each repeat
-    
+
     balloonSize = 0.08
     popped = False
     nPumps = 0
-    
+
     bankButton = event.BuilderKeyResponse()
     # keep track of which components have finished
-    trialComponents = [redBalloonBody, reminderMsg, balloonValMsg, bankedMsg, bankButton]
+    trialComponents = [randomBalloonBody, reminderMsg, balloonValMsg, bankedMsg, bankButton]
     for thisComponent in trialComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -286,7 +313,7 @@ for thisTrial in trials:
         thisComponent.tStopRefresh = None
         if hasattr(thisComponent, 'status'):
             thisComponent.status = NOT_STARTED
-    
+
     # -------Start Routine "trial"-------
     while continueRoutine:
         # get current time
@@ -296,19 +323,19 @@ for thisTrial in trials:
         thisBalloonEarnings = nPumps * 0.05
         balloonEarnings = u"This balloon value:\n$%.2f" % thisBalloonEarnings
         bankedText = u"You have banked:\n$%.2f" % bankedEarnings
-        balloonSize = 0.1+nPumps*0.015
-        
+        balloonSize = 0.1 + nPumps * 0.015
+
         # *balloonBody* updates
-        if t >= 0.0 and redBalloonBody.status == NOT_STARTED:
+        if t >= 0.0 and randomBalloonBody.status == NOT_STARTED:
             # keep track of start time/frame for later
-            redBalloonBody.tStart = t  # not accounting for scr refresh
-            redBalloonBody.frameNStart = frameN  # exact frame indexB
-            win.timeOnFlip(redBalloonBody, 'tStartRefresh')  # time at next scr refresh
-            redBalloonBody.setAutoDraw(True)
-        if redBalloonBody.status == STARTED:  # only update if drawing
-            redBalloonBody.setPos([0, balloonSize/2-.5], log=False)
-            redBalloonBody.setSize(balloonSize, log=False)
-        
+            randomBalloonBody.tStart = t  # not accounting for scr refresh
+            randomBalloonBody.frameNStart = frameN  # exact frame indexB
+            win.timeOnFlip(randomBalloonBody, 'tStartRefresh')  # time at next scr refresh
+            randomBalloonBody.setAutoDraw(True)
+        if randomBalloonBody.status == STARTED:  # only update if drawing
+            randomBalloonBody.setPos([0, balloonSize / 2 - .5], log=False)
+            randomBalloonBody.setSize(balloonSize, log=False)
+
         # *reminderMsg* updates
         if t >= 0.0 and reminderMsg.status == NOT_STARTED:
             # keep track of start time/frame for later
@@ -316,7 +343,7 @@ for thisTrial in trials:
             reminderMsg.frameNStart = frameN  # exact frame index
             win.timeOnFlip(reminderMsg, 'tStartRefresh')  # time at next scr refresh
             reminderMsg.setAutoDraw(True)
-        
+
         # *balloonValMsg* updates
         if t >= 0.0 and balloonValMsg.status == NOT_STARTED:
             # keep track of start time/frame for later
@@ -326,7 +353,7 @@ for thisTrial in trials:
             balloonValMsg.setAutoDraw(True)
         if balloonValMsg.status == STARTED:  # only update if drawing
             balloonValMsg.setText(balloonEarnings, log=False)
-        
+
         # *bankedMsg* updates
         if t >= 0.0 and bankedMsg.status == NOT_STARTED:
             # keep track of start time/frame for later
@@ -337,14 +364,14 @@ for thisTrial in trials:
         if bankedMsg.status == STARTED:  # only update if drawing
             bankedMsg.setText(bankedText, log=False)
         if event.getKeys(['space']):
-          nPumps=nPumps+1
-          if nPumps > maxPumps:
-            popped = True
-            continueRoutine=False
+            nPumps = nPumps + 1
+            if nPumps > maxPumps:
+                popped = True
+                continueRoutine = False
         if event.getKeys(['return']):
             popped = False
             continueRoutine = False
-        
+
         # *bankButton* updates
         if t >= 0.0 and bankButton.status == NOT_STARTED:
             # keep track of start time/frame for later
@@ -356,18 +383,18 @@ for thisTrial in trials:
             event.clearEvents(eventType='keyboard')
         if bankButton.status == STARTED:
             theseKeys = event.getKeys(keyList=['return'])
-            
+
             # check for quit:
             if "escape" in theseKeys:
                 endExpNow = True
             if len(theseKeys) > 0:  # at least one key was pressed
                 # a response ends the routine
                 continueRoutine = False
-        
+
         # check for quit (typically the Esc key)
         if endExpNow or event.getKeys(keyList=["escape"]):
             core.quit()
-        
+
         # check if all components have finished
         if not continueRoutine:  # a component has requested a forced-end of Routine
             break
@@ -376,11 +403,11 @@ for thisTrial in trials:
             if hasattr(thisComponent, "status") and thisComponent.status is not FINISHED:
                 continueRoutine = True
                 break  # at least one component has not yet finished
-        
+
         # refresh the screen
         if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
             win.flip()
-    
+
     # -------Ending Routine "trial"-------
     for thisComponent in trialComponents:
         if hasattr(thisComponent, "setAutoDraw"):
@@ -391,25 +418,25 @@ for thisTrial in trials:
         lastBalloonEarnings = 0.0
     else:
         lastBalloonEarnings = thisBalloonEarnings
-    bankedEarnings = bankedEarnings+lastBalloonEarnings
+    bankedEarnings = bankedEarnings + lastBalloonEarnings
     # save data
     trials.addData('nPumps', nPumps)
     trials.addData('size', balloonSize)
     trials.addData('earnings', thisBalloonEarnings)
     trials.addData('popped', popped)
-    
-    trials.addData('balloonBody.started', redBalloonBody.tStartRefresh)
-    trials.addData('balloonBody.stopped', redBalloonBody.tStopRefresh)
+
+    trials.addData('balloonBody.started', randomBalloonBody.tStartRefresh)
+    trials.addData('balloonBody.stopped', randomBalloonBody.tStopRefresh)
     trials.addData('reminderMsg.started', reminderMsg.tStartRefresh)
     trials.addData('reminderMsg.stopped', reminderMsg.tStopRefresh)
     trials.addData('balloonValMsg.started', balloonValMsg.tStartRefresh)
     trials.addData('balloonValMsg.stopped', balloonValMsg.tStopRefresh)
     trials.addData('bankedMsg.started', bankedMsg.tStartRefresh)
     trials.addData('bankedMsg.stopped', bankedMsg.tStopRefresh)
-    
+
     # the Routine "trial" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
-    
+
     # ------Prepare to start Routine "feedback"-------
     t = 0
     feedbackClock.reset()  # clock
@@ -423,7 +450,7 @@ for thisTrial in trials:
     else:
         feedbackText = u"You banked $%.2f" % lastBalloonEarnings
         cash.play()
-    
+
     feedbackMsg.setText(feedbackText)
     # keep track of which components have finished
     feedbackComponents = [feedbackMsg]
@@ -434,7 +461,7 @@ for thisTrial in trials:
         thisComponent.tStopRefresh = None
         if hasattr(thisComponent, 'status'):
             thisComponent.status = NOT_STARTED
-    
+
     # -------Start Routine "feedback"-------
     while continueRoutine and routineTimer.getTime() > 0:
         # get current time
@@ -456,11 +483,11 @@ for thisTrial in trials:
             feedbackMsg.frameNStop = frameN  # exact frame index
             win.timeOnFlip(feedbackMsg, 'tStopRefresh')  # time at next scr refresh
             feedbackMsg.setAutoDraw(False)
-        
+
         # check for quit (typically the Esc key)
         if endExpNow or event.getKeys(keyList=["escape"]):
             core.quit()
-        
+
         # check if all components have finished
         if not continueRoutine:  # a component has requested a forced-end of Routine
             break
@@ -469,20 +496,20 @@ for thisTrial in trials:
             if hasattr(thisComponent, "status") and thisComponent.status is not FINISHED:
                 continueRoutine = True
                 break  # at least one component has not yet finished
-        
+
         # refresh the screen
         if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
             win.flip()
-    
+
     # -------Ending Routine "feedback"-------
     for thisComponent in feedbackComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    
+
     trials.addData('feedbackMsg.started', feedbackMsg.tStartRefresh)
     trials.addData('feedbackMsg.stopped', feedbackMsg.tStopRefresh)
     thisExp.nextEntry()
-    
+
 # completed 1.0 repeats of 'trials'
 
 # get names of stimulus parameters
@@ -492,8 +519,8 @@ else:
     params = trials.trialList[0].keys()
 # save data for this loop
 trials.saveAsExcel(filename + '.xlsx', sheetName='trials',
-    stimOut=params,
-    dataOut=['n', 'all_mean', 'all_std', 'all_raw'])
+                   stimOut=params,
+                   dataOut=['n', 'all_mean', 'all_std', 'all_raw'])
 
 # ------Prepare to start Routine "finalScore"-------
 t = 0
@@ -528,7 +555,7 @@ while continueRoutine:
         finalScore_2.frameNStart = frameN  # exact frame index
         win.timeOnFlip(finalScore_2, 'tStartRefresh')  # time at next scr refresh
         finalScore_2.setAutoDraw(True)
-    
+
     # *doneKey* updates
     if t >= 0.0 and doneKey.status == NOT_STARTED:
         # keep track of start time/frame for later
@@ -541,7 +568,7 @@ while continueRoutine:
         event.clearEvents(eventType='keyboard')
     if doneKey.status == STARTED:
         theseKeys = event.getKeys()
-        
+
         # check for quit:
         if "escape" in theseKeys:
             endExpNow = True
@@ -550,11 +577,11 @@ while continueRoutine:
             doneKey.rt = doneKey.clock.getTime()
             # a response ends the routine
             continueRoutine = False
-    
+
     # check for quit (typically the Esc key)
     if endExpNow or event.getKeys(keyList=["escape"]):
         core.quit()
-    
+
     # check if all components have finished
     if not continueRoutine:  # a component has requested a forced-end of Routine
         break
@@ -563,7 +590,7 @@ while continueRoutine:
         if hasattr(thisComponent, "status") and thisComponent.status is not FINISHED:
             continueRoutine = True
             break  # at least one component has not yet finished
-    
+
     # refresh the screen
     if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
         win.flip()
@@ -589,7 +616,7 @@ thisExp.nextEntry()
 routineTimer.reset()
 
 # these shouldn't be strictly necessary (should auto-save)
-thisExp.saveAsWideText(filename+'.csv')
+thisExp.saveAsWideText(filename + '.csv')
 thisExp.saveAsPickle(filename)
 logging.flush()
 # make sure everything is closed down
