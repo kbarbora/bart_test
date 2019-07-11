@@ -13,7 +13,7 @@ sudo pip install numpy
 sudo pip install psychopy
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    sudo brew install python2-pyo
+    sudo brew install python-pyo
 elif [[ "$OSTYPE" == "linux-gnu" ]]; then
     sudo apt-get install python-pyo
 else
