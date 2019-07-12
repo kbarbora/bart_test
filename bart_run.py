@@ -289,8 +289,8 @@ for thisTrial in trials:
     if thisTrial is not None:
         for paramName in thisTrial:
             # get random balloon
-            randomBalloonBody, maxPumps = get_random_balloon()
-            # exec('{} = thisTrial[paramName]'.format(paramName))
+            # randomBalloonBody, maxPumps = get_random_balloon()
+            exec('{} = thisTrial[paramName]'.format(paramName))
 
     # ------Prepare to start Routine "trial"-------
     t = 0
