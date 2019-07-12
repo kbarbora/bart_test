@@ -11,6 +11,11 @@ echo "Need sudo privileges to install dependencies"
 sudo pip install future
 sudo pip install numpy
 sudo pip install psychopy
+sudo pip install openpyxl
+sudo pip install xlrd
+sudo pip install xlwt
+sudo pip install xlsxwriter
+sudo pip install pandas
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     sudo brew install python-pyo
