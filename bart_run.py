@@ -11,30 +11,25 @@ If you publish work using this script please cite the PsychoPy publications:
 """
 
 from __future__ import absolute_import, division
-from psychopy import locale_setup, sound, gui, visual, core, data, event, logging, clock
-from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED,
-                                STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
-import numpy as np  # whole numpy lib is available, prepend 'np.'
-from numpy import (sin, cos, tan, log, log10, pi, average,
-                   sqrt, std, deg2rad, rad2deg, linspace, asarray)
-from numpy.random import random, randint, normal, shuffle
+from psychopy import gui, visual, core, data, event, logging
+from psychopy.constants import (NOT_STARTED, STARTED, FINISHED)
 import os  # handy system and path functions
-import sys  # to get file system encoding
+import init
 
 # Ensure that relative paths start from the same directory as this script
 _thisDir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(_thisDir)
-
+init.generate_excel()
 # Store info about the experiment session
 psychopyVersion = '3.0.3'
 expName = 'bart'  # from the Builder filename that created this script
-expInfo = {'participant': '', 'gender (m/f)': '', 'age': '', 'session': '004'}
+expInfo = {'participant': '', 'gender (m/f)': '', 'age': ''}
 dlg = gui.DlgFromDict(dictionary=expInfo, title=expName)
-if dlg.OK == False:
+if not dlg.OK:
     core.quit()  # user pressed cancel
 expInfo['date'] = data.getDateStr()  # add a simple timestamp
-expInfo['expName'] = expName
-expInfo['psychopyVersion'] = psychopyVersion
+# expInfo['expName'] = expName
+# expInfo['psychopyVersion'] = psychopyVersion
 
 # Data file name stem = absolute path + name; later add .psyexp, .csv, .log, etc
 filename = _thisDir + os.sep + 'data' + os.sep + '%s_%s' % (expInfo['participant'], expInfo['date'])
@@ -46,7 +41,7 @@ thisExp = data.ExperimentHandler(name=expName, version='',
                                  savePickle=True, saveWideText=True,
                                  dataFileName=filename)
 # save a log file for detail verbose info
-logFile = logging.LogFile(filename + '.log', level=logging.WARNING)
+# logFile = logging.LogFile(filename + '.log', level=logging.WARNING)
 logging.console.setLevel(logging.WARNING)  # this outputs to the screen, not a file
 
 endExpNow = False  # flag for 'escape' or other condition => quit the exp
@@ -60,20 +55,25 @@ win = visual.Window(
     monitor='testMonitor', color=[0, 0, 0], colorSpace='rgb',
     blendMode='avg', useFBO=True)
 # store frame rate of monitor if we can measure it
-expInfo['frameRate'] = win.getActualFrameRate()
-if expInfo['frameRate'] is not None:
-    frameDur = 1.0 / round(expInfo['frameRate'])
-else:
-    frameDur = 1.0 / 60.0  # could not measure, so guess
+# expInfo['frameRate'] = win.getActualFrameRate()
+# if expInfo['frameRate'] is not None:
+#     frameDur = 1.0 / round(expInfo['frameRate'])
+# else:
+#     frameDur = 1.0 / 60.0  # could not measure, so guess
 
 # Initialize components for Routine "instructions"
 instructionsClock = core.Clock()
 instrMessage = visual.TextStim(win=win, name='instrMessage',
-                               text="This is a game where you have to optimise your earnings in a balloon pumping competition.\n\
-    \nYou get prize money for each balloon you pump up, according to its size. But if you pump it too "
-                                    "far it will pop and you'll get nothing for that balloon.\n\nBalloons differ in their "
-                                    "maximum size - they can occasionally reach to almost the size of the screen but most will"
-                                    " pop well before that.\n\nPress\n    SPACE to pump the balloon\n    RETURN to bank the cash"
+                               text="This is a game where you have to optimise your earnings"
+                                    " in a balloon pumping competition.\nThroughout the task, you will be presented "
+                                    "with balloons, one at the time. You can pump it to increase its size."
+                                    " \nYou will accumulate 5 cents "
+                                    "in a temporary bank for each pump. But if you pump it too far it will"
+                                    " pop and you'll get nothing for that balloon.\n\nBalloons differ in their"
+                                    "\n-Maximum size:\tThey can occasionally reach to almost the size of the screen"
+                                    " but most\n\t\t\t\twill pop well before that."
+                                    "\n-Color:\t\t\tThe explosion point varies across balloons\n\n"
+                                    "Press\n    [SPACE] to pump the balloon\n    [RETURN] to keep accumulated cash"
                                     " for this balloon and move onto the next\n",
                                font='Arial',
                                units='height', pos=[0, 0], height=0.025, wrapWidth=None, ori=0,
@@ -91,53 +91,53 @@ thisBalloonEarnings = 0.0
 balloonSize = 0.08
 balloonMsgHeight = 0.01
 
-redBalloonBody = visual.ImageStim(
-    win=win, name='balloonBody', units='height',
+redBalloon = visual.ImageStim(
+    win=win, name='red', units='height',
     image='redBalloon.png', mask=None,
     ori=-90, pos=[0, 0], size=1.0,
     color=[1, 1, 1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-2.0)
-greenBalloonBody = visual.ImageStim(
-    win=win, name='balloonBody', units='height',
+greenBalloon = visual.ImageStim(
+    win=win, name='green', units='height',
     image='greenBalloon.png', mask=None,
     ori=-90, pos=[0, 0], size=1.0,
     color=[1, 1, 1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-2.0)
-blueBalloonBody = visual.ImageStim(
-    win=win, name='balloonBody', units='height',
+blueBalloon = visual.ImageStim(
+    win=win, name='blue', units='height',
     image='blueBalloon.png', mask=None,
     ori=-90, pos=[0, 0], size=1.0,
     color=[1, 1, 1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-2.0)
-balloons = [redBalloonBody, greenBalloonBody, blueBalloonBody]
+balloons = [redBalloon, greenBalloon, blueBalloon]
 balloonsCount = [30, 30, 30]
 RED_BALLOON = 0
 GREEN_BALLOON = 1
 BLUE_BALLOON = 2
 
-
-def get_random_balloon():
-    while True:
-        randomize = randint(0, 3)
-        if balloonsCount[randomize] > 0:
-            break
-    balloonsCount[randomize] -= 1
-    return balloons[randomize], get_random_pumps(randomize)
-
-
-def get_random_pumps(ballooncolor=RED_BALLOON):
-    if ballooncolor == RED_BALLOON:
-        return randint(1, 9)
-    elif ballooncolor == GREEN_BALLOON:
-        return randint(1, 33)
-    elif ballooncolor == BLUE_BALLOON:
-        return randint(1, 65)
-    else:
-        raise Exception("[Error] Balloon not identified")
-        return
+#
+# def get_random_balloon():
+#     while True:
+#         randomize = randint(0, 3)
+#         if balloonsCount[randomize] > 0:
+#             break
+#     balloonsCount[randomize] -= 1
+#     return balloons[randomize], get_random_pumps(randomize)
+#
+#
+# def get_random_pumps(ballooncolor=RED_BALLOON):
+#     if ballooncolor == RED_BALLOON:
+#         return randint(1, 9)
+#     elif ballooncolor == GREEN_BALLOON:
+#         return randint(1, 33)
+#     elif ballooncolor == BLUE_BALLOON:
+#         return randint(1, 65)
+#     else:
+#         raise Exception("[Error] Balloon not identified")
+#         return
 
 
 reminderMsg = visual.TextStim(win=win, name='reminderMsg',
@@ -169,6 +169,15 @@ from psychopy import sound
 feedbackText = ""
 bang = sound.Sound("bang.wav")
 cash = sound.Sound("cash.wav")
+
+
+moneyEarned = visual.TextStim(win= win, name='moneyEarned',
+                              text='default text',
+                              font='Arial',
+                              # alignHoriz='center', alignVert='top',
+                              pos=(.7, .5),
+                              color='white', colorSpace='rgb', opacity=1, height=0.05,
+                              languageStyle='LTR')
 
 feedbackMsg = visual.TextStim(win=win, name='feedbackMsg',
                               text='default text',
@@ -265,23 +274,24 @@ while continueRoutine:
 for thisComponent in instructionsComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
-thisExp.addData('instrMessage.started', instrMessage.tStartRefresh)
-thisExp.addData('instrMessage.stopped', instrMessage.tStopRefresh)
+# thisExp.addData('instrMessage.started', instrMessage.tStartRefresh)
+# thisExp.addData('instrMessage.stopped', instrMessage.tStopRefresh)
 # the Routine "instructions" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
-trials = data.TrialHandler(nReps=1.0, method='random',
-                           extraInfo=expInfo, originPath=-1,
+trials = data.TrialHandler(nReps=1.0, method='sequential',
+                           extraInfo=expInfo,
+                           originPath=-1,
                            trialList=data.importConditions('trialTypes.xlsx'),
                            seed=1832, name='trials')
 thisExp.addLoop(trials)  # add the loop to the experiment
 thisTrial = trials.trialList[0]  # so we can initialise stimuli with some values
 
 # abbreviate parameter names if possible (e.g. rgb = thisTrial.rgb)
-if thisTrial is not None:
-    for paramName in thisTrial:
-        exec('{} = thisTrial[paramName]'.format(paramName))
+# if thisTrial is not None:
+#     for paramName in thisTrial:
+#         exec('{} = thisTrial[paramName]'.format(paramName))
 
 for thisTrial in trials:
     currentLoop = trials
@@ -289,9 +299,8 @@ for thisTrial in trials:
     if thisTrial is not None:
         for paramName in thisTrial:
             # get random balloon
-            # randomBalloonBody, maxPumps = get_random_balloon()
-            exec('{} = thisTrial[paramName]'.format(paramName))
-
+            exec_string = '{} = {}'.format(paramName, thisTrial[paramName])
+            exec exec_string
     # ------Prepare to start Routine "trial"-------
     t = 0
     trialClock.reset()  # clock
@@ -305,7 +314,7 @@ for thisTrial in trials:
 
     bankButton = event.BuilderKeyResponse()
     # keep track of which components have finished
-    trialComponents = [randomBalloonBody, reminderMsg, balloonValMsg, bankedMsg, bankButton]
+    trialComponents = [randomBalloon, reminderMsg, balloonValMsg, bankedMsg, bankButton]
     for thisComponent in trialComponents:
         thisComponent.tStart = None
         thisComponent.tStop = None
@@ -316,25 +325,30 @@ for thisTrial in trials:
 
     # -------Start Routine "trial"-------
     while continueRoutine:
+
+        moneyEarnedText = u"Total Money in Bank $%.2f" % bankedEarnings
+        moneyEarned.setText(moneyEarnedText)
+        moneyEarned.setAutoDraw(True)
+
         # get current time
         t = trialClock.getTime()
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
         thisBalloonEarnings = nPumps * 0.05
-        balloonEarnings = u"This balloon value:\n$%.2f" % thisBalloonEarnings
+        balloonEarnings = u"This %s balloon value:\n$%.2f" % (randomBalloon.name, thisBalloonEarnings)
         bankedText = u"You have banked:\n$%.2f" % bankedEarnings
         balloonSize = 0.1 + nPumps * 0.015
 
         # *balloonBody* updates
-        if t >= 0.0 and randomBalloonBody.status == NOT_STARTED:
+        if t >= 0.0 and randomBalloon.status == NOT_STARTED:
             # keep track of start time/frame for later
-            randomBalloonBody.tStart = t  # not accounting for scr refresh
-            randomBalloonBody.frameNStart = frameN  # exact frame indexB
-            win.timeOnFlip(randomBalloonBody, 'tStartRefresh')  # time at next scr refresh
-            randomBalloonBody.setAutoDraw(True)
-        if randomBalloonBody.status == STARTED:  # only update if drawing
-            randomBalloonBody.setPos([0, balloonSize / 2 - .5], log=False)
-            randomBalloonBody.setSize(balloonSize, log=False)
+            randomBalloon.tStart = t  # not accounting for scr refresh
+            randomBalloon.frameNStart = frameN  # exact frame indexB
+            win.timeOnFlip(randomBalloon, 'tStartRefresh')  # time at next scr refresh
+            randomBalloon.setAutoDraw(True)
+        if randomBalloon.status == STARTED:  # only update if drawing
+            randomBalloon.setPos([0, balloonSize / 2 - .5], log=False)
+            randomBalloon.setSize(balloonSize, log=False)
 
         # *reminderMsg* updates
         if t >= 0.0 and reminderMsg.status == NOT_STARTED:
@@ -425,14 +439,14 @@ for thisTrial in trials:
     trials.addData('earnings', thisBalloonEarnings)
     trials.addData('popped', popped)
 
-    trials.addData('balloonBody.started', randomBalloonBody.tStartRefresh)
-    trials.addData('balloonBody.stopped', randomBalloonBody.tStopRefresh)
-    trials.addData('reminderMsg.started', reminderMsg.tStartRefresh)
-    trials.addData('reminderMsg.stopped', reminderMsg.tStopRefresh)
-    trials.addData('balloonValMsg.started', balloonValMsg.tStartRefresh)
-    trials.addData('balloonValMsg.stopped', balloonValMsg.tStopRefresh)
-    trials.addData('bankedMsg.started', bankedMsg.tStartRefresh)
-    trials.addData('bankedMsg.stopped', bankedMsg.tStopRefresh)
+    # trials.addData('balloonBody.started', randomBalloon.tStartRefresh)
+    # trials.addData('balloonBody.stopped', randomBalloon.tStopRefresh)
+    # trials.addData('reminderMsg.started', reminderMsg.tStartRefresh)
+    # trials.addData('reminderMsg.stopped', reminderMsg.tStopRefresh)
+    # trials.addData('balloonValMsg.started', balloonValMsg.tStartRefresh)
+    # trials.addData('balloonValMsg.stopped', balloonValMsg.tStopRefresh)
+    # trials.addData('bankedMsg.started', bankedMsg.tStartRefresh)
+    # trials.addData('bankedMsg.stopped', bankedMsg.tStopRefresh)
 
     # the Routine "trial" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
@@ -506,8 +520,8 @@ for thisTrial in trials:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
 
-    trials.addData('feedbackMsg.started', feedbackMsg.tStartRefresh)
-    trials.addData('feedbackMsg.stopped', feedbackMsg.tStopRefresh)
+    # trials.addData('feedbackMsg.started', feedbackMsg.tStartRefresh)
+    # trials.addData('feedbackMsg.stopped', feedbackMsg.tStopRefresh)
     thisExp.nextEntry()
 
 # completed 1.0 repeats of 'trials'
@@ -518,9 +532,9 @@ if trials.trialList in ([], [None], None):
 else:
     params = trials.trialList[0].keys()
 # save data for this loop
-trials.saveAsExcel(filename + '.xlsx', sheetName='trials',
-                   stimOut=params,
-                   dataOut=['n', 'all_mean', 'all_std', 'all_raw'])
+# trials.saveAsExcel(filename + '.xlsx', sheetName='trials',
+#                    stimOut=params,
+#                    dataOut=['n', 'all_mean', 'all_std', 'all_raw'])
 
 # ------Prepare to start Routine "finalScore"-------
 t = 0
@@ -528,7 +542,7 @@ finalScoreClock.reset()  # clock
 frameN = -1
 continueRoutine = True
 # update component parameters for each repeat
-scoreText = u"Well done! You banked a total of\n$%2.f" % bankedEarnings
+scoreText = u"Well done! Game finished"
 finalScore_2.setText(scoreText)
 doneKey = event.BuilderKeyResponse()
 # keep track of which components have finished
@@ -600,24 +614,24 @@ for thisComponent in finalScoreComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
 
-thisExp.addData('finalScore_2.started', finalScore_2.tStartRefresh)
-thisExp.addData('finalScore_2.stopped', finalScore_2.tStopRefresh)
+# thisExp.addData('finalScore_2.started', finalScore_2.tStartRefresh)
+# thisExp.addData('finalScore_2.stopped', finalScore_2.tStopRefresh)
 # check responses
 if doneKey.keys in ['', [], None]:  # No response was made
     doneKey.keys = None
-thisExp.addData('doneKey.keys', doneKey.keys)
+# thisExp.addData('doneKey.keys', doneKey.keys)
 
 if doneKey.keys is not None:  # we had a response
     thisExp.addData('doneKey.rt', doneKey.rt)
-thisExp.addData('doneKey.started', doneKey.tStartRefresh)
-thisExp.addData('doneKey.stopped', doneKey.tStopRefresh)
+# thisExp.addData('doneKey.started', doneKey.tStartRefresh)
+# thisExp.addData('doneKey.stopped', doneKey.tStopRefresh)
 thisExp.nextEntry()
 # the Routine "finalScore" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
 
 # these shouldn't be strictly necessary (should auto-save)
 thisExp.saveAsWideText(filename + '.csv')
-thisExp.saveAsPickle(filename)
+# thisExp.saveAsPickle(filename)
 logging.flush()
 # make sure everything is closed down
 thisExp.abort()  # or data files will save again on exit
