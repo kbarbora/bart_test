@@ -18,7 +18,7 @@ sudo pip install xlsxwriter
 sudo pip install pandas
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    sudo brew install python-pyo
+    sudo python -m pip install -U pyo
 elif [[ "$OSTYPE" == "linux-gnu" ]]; then
     sudo apt-get install python-pyo
 else

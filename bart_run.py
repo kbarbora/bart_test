@@ -52,7 +52,7 @@ endExpNow = False  # flag for 'escape' or other condition => quit the exp
 win = visual.Window(
     size=[1920, 1080], fullscr=True, screen=0,
     allowGUI=False, allowStencil=False,
-    monitor='testMonitor', color=[0, 0, 0], colorSpace='rgb',
+    monitor='testMonitor', color='gainsboro', colorSpace='rgb',
     blendMode='avg', useFBO=True)
 # store frame rate of monitor if we can measure it
 # expInfo['frameRate'] = win.getActualFrameRate()
@@ -66,7 +66,7 @@ instructionsClock = core.Clock()
 instrMessage = visual.TextStim(win=win, name='instrMessage',
                                text="This is a game where you have to optimise your earnings"
                                     " in a balloon pumping competition.\nThroughout the task, you will be presented "
-                                    "with balloons, one at the time. You can pump it to increase its size."
+                                    "with 90 balloons, one at the time. You can pump it to increase its size."
                                     " \nYou will accumulate 5 cents "
                                     "in a temporary bank for each pump. But if you pump it too far it will"
                                     " pop and you'll get nothing for that balloon.\n\nBalloons differ in their"
@@ -74,10 +74,10 @@ instrMessage = visual.TextStim(win=win, name='instrMessage',
                                     " but most\n\t\t\t\twill pop well before that."
                                     "\n-Color:\t\t\tThe explosion point varies across balloons\n\n"
                                     "Press\n    [SPACE] to pump the balloon\n    [RETURN] to keep accumulated cash"
-                                    " for this balloon and move onto the next\n",
+                                    " for this balloon and move onto the next balloon\n",
                                font='Arial',
                                units='height', pos=[0, 0], height=0.025, wrapWidth=None, ori=0,
-                               color='white', colorSpace='rgb', opacity=1,
+                               color='black', colorSpace='rgb', opacity=1,
                                languageStyle='LTR',
                                depth=0.0)
 
@@ -144,21 +144,21 @@ reminderMsg = visual.TextStim(win=win, name='reminderMsg',
                               text='Press SPACE to pump the balloon\nPress RETURN to bank this sum',
                               font='Arial',
                               units='height', pos=[0, -0.8], height=0.025, wrapWidth=None, ori=0,
-                              color='white', colorSpace='rgb', opacity=1,
+                              color='black', colorSpace='rgb', opacity=1,
                               languageStyle='LTR',
                               depth=-3.0)
 balloonValMsg = visual.TextStim(win=win, name='balloonValMsg',
                                 text='default text',
                                 font='Arial',
                                 units='height', pos=[0, 0.05], height=0.025, wrapWidth=None, ori=0,
-                                color='white', colorSpace='rgb', opacity=1,
+                                color='black', colorSpace='rgb', opacity=1,
                                 languageStyle='LTR',
                                 depth=-4.0)
 bankedMsg = visual.TextStim(win=win, name='bankedMsg',
                             text='default text',
                             font='Arial',
                             units='height', pos=[0, 0.8], height=0.025, wrapWidth=None, ori=0,
-                            color='white', colorSpace='rgb', opacity=1,
+                            color='black', colorSpace='rgb', opacity=1,
                             languageStyle='LTR',
                             depth=-5.0)
 
@@ -171,19 +171,27 @@ bang = sound.Sound("bang.wav")
 cash = sound.Sound("cash.wav")
 
 
-moneyEarned = visual.TextStim(win= win, name='moneyEarned',
+moneyEarned = visual.TextStim(win=win, name='moneyEarned',
                               text='default text',
                               font='Arial',
                               # alignHoriz='center', alignVert='top',
                               pos=(.7, .5),
-                              color='white', colorSpace='rgb', opacity=1, height=0.05,
+                              color='black', colorSpace='rgb', opacity=1, height=0.05,
+                              languageStyle='LTR')
+
+controlKeys = visual.TextStim(win=win, name='controlKeys',
+                              text='default text',
+                              font='Arial',
+                              # alignHoriz='center', alignVert='top',
+                              pos=(-.7, -.9),
+                              color='black', colorSpace='rgb', opacity=1, height=0.05,
                               languageStyle='LTR')
 
 feedbackMsg = visual.TextStim(win=win, name='feedbackMsg',
                               text='default text',
                               font='Arial',
                               units='height', pos=[0, 0], height=0.025, wrapWidth=None, ori=0,
-                              color='white', colorSpace='rgb', opacity=1,
+                              color='black', colorSpace='rgb', opacity=1,
                               languageStyle='LTR',
                               depth=-1.0)
 
@@ -194,7 +202,7 @@ finalScore_2 = visual.TextStim(win=win, name='finalScore_2',
                                text='default text',
                                font='Arial',
                                units='height', pos=[0, 0], height=0.025, wrapWidth=None, ori=0,
-                               color='white', colorSpace='rgb', opacity=1,
+                               color='black', colorSpace='rgb', opacity=1,
                                languageStyle='LTR',
                                depth=-1.0)
 
@@ -330,13 +338,17 @@ for thisTrial in trials:
         moneyEarned.setText(moneyEarnedText)
         moneyEarned.setAutoDraw(True)
 
+        controlKeysText = u"[SPACE] = pump balloon\n[RETURN] = cash out current balloon"
+        controlKeys.setText(controlKeysText)
+        controlKeys.setAutoDraw(True)
+
         # get current time
         t = trialClock.getTime()
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
         thisBalloonEarnings = nPumps * 0.05
         balloonEarnings = u"This %s balloon value:\n$%.2f" % (randomBalloon.name, thisBalloonEarnings)
-        bankedText = u"You have banked:\n$%.2f" % bankedEarnings
+        bankedText = u"You cash out:\n$%.2f" % bankedEarnings
         balloonSize = 0.1 + nPumps * 0.015
 
         # *balloonBody* updates
