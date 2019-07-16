@@ -8,10 +8,11 @@ RED_MAX_PUMPS = 8
 GREEN = BALLOONS[1]
 GREEN_MAX_PUMPS = 32
 BLUE = BALLOONS[2]
-BLUE_MAX_PUMPS = 64
+BLUE_MAX_PUMPS = 128
 NUM_TRIALS = 90
 NUM_TRIALS_RANDOM = 30
 NUM_TRIALS_COLOR = 20
+NUM_RANDOM_EACH_COLOR = 10
 
 
 def generate_excel():
@@ -35,15 +36,15 @@ def generate_balloon_colors():
         random_balloon = random.choice(balloons)
         if random_balloon is RED:
             red_counter += 1
-            if red_counter == 10:
+            if red_counter == NUM_RANDOM_EACH_COLOR:
                 balloons.remove(RED)
         elif random_balloon is GREEN:
             green_counter += 1
-            if green_counter == 10:
+            if green_counter == NUM_RANDOM_EACH_COLOR:
                 balloons.remove(GREEN)
         elif random_balloon is BLUE:
             blue_counter += 1
-            if blue_counter == 10:
+            if blue_counter == NUM_RANDOM_EACH_COLOR:
                 balloons.remove(BLUE)
         colors.append(random_balloon)
 

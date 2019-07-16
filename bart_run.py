@@ -15,6 +15,7 @@ from psychopy import gui, visual, core, data, event, logging
 from psychopy.constants import (NOT_STARTED, STARTED, FINISHED)
 import os  # handy system and path functions
 import init
+import format_datafile
 
 # Ensure that relative paths start from the same directory as this script
 _thisDir = os.path.dirname(os.path.abspath(__file__))
@@ -474,7 +475,7 @@ for thisTrial in trials:
         feedbackText = "Oops! Lost that one!"
         bang.play()
     else:
-        feedbackText = u"You banked $%.2f" % lastBalloonEarnings
+        feedbackText = u"You cash out $%.2f" % lastBalloonEarnings
         cash.play()
 
     feedbackMsg.setText(feedbackText)
@@ -512,6 +513,7 @@ for thisTrial in trials:
 
         # check for quit (typically the Esc key)
         if endExpNow or event.getKeys(keyList=["escape"]):
+            format_datafile.delete_unused_columns(filename + '.csv')
             core.quit()
 
         # check if all components have finished
@@ -606,6 +608,7 @@ while continueRoutine:
 
     # check for quit (typically the Esc key)
     if endExpNow or event.getKeys(keyList=["escape"]):
+        format_datafile.delete_unused_columns(filename + '.csv')
         core.quit()
 
     # check if all components have finished
@@ -643,9 +646,11 @@ routineTimer.reset()
 
 # these shouldn't be strictly necessary (should auto-save)
 thisExp.saveAsWideText(filename + '.csv')
+format_datafile.delete_unused_columns(filename + '.csv')
 # thisExp.saveAsPickle(filename)
 logging.flush()
 # make sure everything is closed down
 thisExp.abort()  # or data files will save again on exit
 win.close()
+format_datafile.delete_unused_columns(filename + '.csv')
 core.quit()
