@@ -309,7 +309,7 @@ for thisTrial in trials:
         for paramName in thisTrial:
             # get random balloon
             exec_string = '{} = {}'.format(paramName, thisTrial[paramName])
-            exec exec_string
+            exec(exec_string)
     # ------Prepare to start Routine "trial"-------
     t = 0
     trialClock.reset()  # clock
