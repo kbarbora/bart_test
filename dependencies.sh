@@ -22,7 +22,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif [[ "$OSTYPE" == "linux-gnu" ]]; then
     sudo apt-get install python-pyo
 else
-    echo "[Error] OS not detected. Exiting"
+    echo "[Error] OS not supported or detected. Exiting"
     echo
     exit
 fi
