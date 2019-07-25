@@ -238,7 +238,7 @@ continueRoutine = True
 # update component parameters for each repeat
 resp = event.BuilderKeyResponse()
 # keep track of which components have finished
-instructionsComponents = [instrMessage, resp]
+instructionsComponents = [instrMessage, resp, credits]
 for thisComponent in instructionsComponents:
     thisComponent.tStart = None
     thisComponent.tStop = None

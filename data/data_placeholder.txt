@@ -1,1 +1,3 @@
-Place holder to create data directory
+In this directory the data is stored.
+This is only a placeholder, so the directory
+does get delete when pushed to github
