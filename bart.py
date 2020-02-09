@@ -33,7 +33,8 @@ expInfo['date'] = data.getDateStr()  # add a simple timestamp
 # expInfo['psychopyVersion'] = psychopyVersion
 
 # Data file name stem = absolute path + name; later add .psyexp, .csv, .log, etc
-filename = _thisDir + os.sep + 'data' + os.sep + '%s_%s' % (expInfo['participant'], expInfo['date'])
+expInfo['date'] = expInfo['date'][4:].replace('_', '', 1)
+filename = _thisDir + os.sep + 'data' + os.sep + '%s_%s_%s_%s' % (expInfo['participant'], expInfo['gender (m/f)'], expInfo['age'], expInfo['date'])
 
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
@@ -316,7 +317,8 @@ trials = data.TrialHandler(nReps=1.0, method='sequential',
                            seed=1832, name='trials')
 thisExp.addLoop(trials)  # add the loop to the experiment
 thisTrial = trials.trialList[0]  # so we can initialise stimuli with some values
-
+thisTrial['time'] = 0
+print(thisTrial)
 # abbreviate parameter names if possible (e.g. rgb = thisTrial.rgb)
 # if thisTrial is not None:
 #     for paramName in thisTrial:
@@ -478,6 +480,9 @@ for thisTrial in trials:
     trials.addData('size', balloonSize)
     trials.addData('earnings', thisBalloonEarnings)
     trials.addData('popped', popped)
+    trials.addData('time', '{0:.2f}'.format(round(t, 2)))
+    # @TODO get time
+    print(t)
 
     # trials.addData('balloonBody.started', randomBalloon.tStartRefresh)
     # trials.addData('balloonBody.stopped', randomBalloon.tStopRefresh)
